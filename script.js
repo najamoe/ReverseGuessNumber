@@ -42,7 +42,7 @@ function guessIsTooLow(currentGuess) {
     start = currentGuess + 1;
     currentGuess = Math.floor((start + end) / 2);
     updateGuessList(currentGuess, "That was too low");
-    updateGuessCounter(); // Update guess counter
+    updateGuessCounter(); 
     return currentGuess; 
 }
 
@@ -50,7 +50,7 @@ function guessIsTooHigh(currentGuess) {
     end = currentGuess - 1;
     currentGuess = Math.floor((start + end) / 2);
     updateGuessList(currentGuess, "That was too high");
-    updateGuessCounter(); // Update guess counter
+    updateGuessCounter(); 
     return currentGuess;
 }
 
