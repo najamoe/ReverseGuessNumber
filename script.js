@@ -1,16 +1,18 @@
 "use strict";
 
-let currentGuess; // declare currentGuess outside the functions, global varible, can be accessed from anywhere in the code
+let currentGuess;
+let start = 1;
+let end = 100;
 
-window.addEventListener("load", start);
+window.addEventListener("load", startGame);
 
-function start() {
+function startGame() {
     document.getElementById("btn-start").addEventListener("click", generateGuess);
 }
 
 function generateGuess() {
-    currentGuess = Math.floor(Math.random() * 99) + 1;
-    
+    currentGuess = Math.floor((start + end) / 2); // Initial guess using binary search
+
     // Display the initial guess in the list with a custom message
     updateGuessList(currentGuess, "My first guess");
 
@@ -37,42 +39,59 @@ function generateGuess() {
     });
 }
 
+function binarySearch(value) {
+    let start = 1;
+    let end = 100;
+
+    while (start <= end) {
+        let middle = start + Math.floor((end - start) / 2);
+
+        if (middle === value) {
+            return middle; // Found the correct value
+        } else if (middle < value) {
+            start = middle + 1; // Adjusting the start index
+        } else {
+            end = middle - 1; // Adjusting the end index
+        }
+    }
+
+    return -1; // Value not found
+}
+
+function guessIsTooLow(currentGuess) {
+    // Update the start range for binary search
+    start = currentGuess + 1;
+
+    // Calculate the next guess using binary search
+    currentGuess = binarySearch(Math.floor((start + end) / 2));
+
+    // Update the guess list with the new guess and response
+    updateGuessList(currentGuess, "That was too low");
+
+    return currentGuess; // Return the new guess for further use
+}
+
+function guessIsTooHigh(currentGuess) {
+    // Update the end range for binary search
+    end = currentGuess - 1;
+
+    // Calculate the next guess using binary search
+    currentGuess = binarySearch(Math.floor((start + end) / 2));
+
+    // Update the guess list with the new guess and response
+    updateGuessList(currentGuess, "That was too high");
+
+    return currentGuess; // Return the new guess for further use
+}
+
 function guessIsCorrect(guess) {
     const list = document.querySelector("#guess-list");
     const html = `<li>I guessed ${guess} - That was correct!</li>`;
     list.insertAdjacentHTML("beforeend", html);
 }
 
-function guessIsTooLow(currentGuess) {
-    // Calculate a new guess by multiplying the current guess by 1.5
-    const newGuess = Math.floor(currentGuess * 1.5);
-
-    // Ensure the new guess doesn't go above 100
-    const boundedGuess = Math.min(newGuess, 100);
-    
-    // Update the guess list with the new guess and response
-    updateGuessList(boundedGuess, "That was too low");
-    
-    // Return the bounded guess for further use
-    return boundedGuess;
-}
-
-function guessIsTooHigh(currentGuess) {
-    // Calculate a new guess by dividing the current guess by 2
-    const newGuess = Math.floor(currentGuess / 2);
-
-    // Ensure the new guess doesn't go below 1
-    const boundedGuess = Math.max(newGuess, 1);
-    
-    // Update the guess list with the new guess and response
-    updateGuessList(boundedGuess, "That was too high");
-    
-    // Return the bounded guess for further use
-    return boundedGuess;
-}
-
 function updateGuessList(guess, response) {
     const list = document.querySelector("#guess-list");
-    const html = `<li>I'm guessing ${guess} - ${feedback}</li>`;
+    const html = `<li>I'm guessing ${guess} - ${response}</li>`;
     list.insertAdjacentHTML("beforeend", html);
 }
